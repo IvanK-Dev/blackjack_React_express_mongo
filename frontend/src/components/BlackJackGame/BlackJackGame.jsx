@@ -6,10 +6,7 @@ import Dealer from '../Dealer/Dealer';
 import Player from '../Player/Player';
 import BotPlayerFactory from '../../services/BotPlayerFactory';
 import BotPlayer from '../BotPlayer/BotPlayer';
-import { dealerOrBotDrawCards } from '../../helpers/dealerOrBotDrawCards';
-import { waitUntilPlayerBust } from '../../helpers/waitUntilPlayerBust';
-import { waitUntilPlayerStops } from '../../helpers/waitUntilPlayerStops';
-import { delay } from '../../helpers/delay';
+import { dealerOrBotDrawCards, delay, waitUntilPlayerBust, waitUntilPlayerStops } from '../../helpers';
 
 /**
  * Компонент, представляющий игру.
