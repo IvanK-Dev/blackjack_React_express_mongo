@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const { gameRoutes } = require('./routes/api');
 
 const app = express();
 
@@ -15,8 +16,10 @@ app.get('/', (_, res) => {
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
+app.use('/api/game',gameRoutes)
+
 app.all('*', (_, res) => {
-  res.status(404).json({ message: 'Resourse not found ...' });
+  res.status(404).json({ message: 'app. Resourse not found ...' });
 });
 
 app.use((err, _, res, __) => {
