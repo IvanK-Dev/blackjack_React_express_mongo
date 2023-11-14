@@ -15,6 +15,11 @@ app.get('/', (_, res) => {
   res.sendFile(path.join(publicPath, 'index.html'));
 });
 
+//Routes
+const apiRoutes=require('./routes/api')
+app.use('/api',apiRoutes)
+
+
 app.all('*', (_, res) => {
   res.status(404).json({ message: 'Resourse not found ...' });
 });
