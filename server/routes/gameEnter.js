@@ -1,12 +1,12 @@
 const express=require('express')
 const router=express.Router()
 const jwt=require('jsonwebtoken')
-const ObjModel=require('../models/ObjModel')
+const gameModel=require('../models/gameModel')
 
 router.post('/gamein',async(req,res)=>{
     try {
         const {objectId}=req.body;
-        const object=await ObjModel.findOne({_id:objectId})
+        const object=await gameModel.findOne({_id:objectId})
 
         if(!object){
             return res.status(404).json({message:'Game not found'})

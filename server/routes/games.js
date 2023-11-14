@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const {nanoid} = require('nanoid');
-const ObjectModel = require('../models/ObjectModel');
+const gameModel = require('../models/gameModel');
 
 router.post('/create_game', async (req, res) => {
   try {
+    console.log('/create_game')
     const objectId = nanoid();
-    const object = new ObjectModel({ _id: objectId });
+    const object = new gameModel({ _id: objectId });
     await object.save();
 
     const token = jwt.sign({ objectId }, process.env.JWT_SECRET);

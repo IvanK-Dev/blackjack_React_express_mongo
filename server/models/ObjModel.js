@@ -1,8 +1,8 @@
 const mongoose=require('mongoose')
 
-const ObjSchema=new mongoose.Schema({
+const gameSchema=new mongoose.Schema({
     _id:String,
 })
 
-const ObjModel=mongoose.model('Object',ObjSchema)
-module.exports=ObjModel
+const gameModel=mongoose.model('Object',gameSchema)
+module.exports=gameModel
