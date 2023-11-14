@@ -5,8 +5,6 @@ import { waitForEndGame } from './waitForEndGame';
 import { waitUntilPlayerBust } from './waitUntilPlayerBust';
 import { waitUntilPlayerStops } from './waitUntilPlayerStops';
 
-console.log('!!!!');
-
 export {
   buttonsDisableToggle,
   dealerOrBotDrawCards,
