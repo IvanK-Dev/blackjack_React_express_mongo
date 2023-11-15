@@ -66,7 +66,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, '../server/public'), // Путь к статическим файлам для dev-сервера
     },
-    port: 3000, // Порт dev-сервера
+    port: 3001, // Порт dev-сервера
     open: true, // Автоматическое открытие браузера при старте dev-сервера
     historyApiFallback: true, // Обработка истории для поддержки роутинга в SPA
   },

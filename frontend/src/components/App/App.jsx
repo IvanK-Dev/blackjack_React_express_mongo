@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
 import { useGame } from '../../context/gameContext';
 import BlackJackGame from '../BlackJackGame/BlackJackGame';
 import Modal from '../Modal/Modal';
 import PlayerSelector from '../Modal/PlayerSelector/PlayerSelector';
 import WinnersElement from '../Modal/WinnersElement/WinnersElement';
+import GameManager from '../GameManager/GameManager';
 
 const App = () => {
   const { startGame, setStartGame, playerCount, players } = useGame();
@@ -14,7 +16,7 @@ const App = () => {
     buttonText: 'start',
   });
 
-/**
+  /**
    * Обработчик нажатия кнопки начала игры, скрывает модальное окно.
    * @function
    */
@@ -32,28 +34,39 @@ const App = () => {
       component: <WinnersElement players={players} />,
       buttonText: 'Next Game',
     });
-    
+
     // Показ модального окна и сброс игры
     setShowModal(true);
     setStartGame(false);
   };
 
   return (
-    <>
-      {showModal && (
-        <Modal
-          component={modalInfo.component}
-          buttonText={modalInfo.buttonText}
-          onClick={handleStartGame}
+    <Router>
+      <Routes>
+        <Route path="/" element={<GameManager />} />
+
+        <Route
+          path="/game"
+          element={
+            <>
+              {showModal && (
+                <Modal
+                  component={modalInfo.component}
+                  buttonText={modalInfo.buttonText}
+                  onClick={handleStartGame}
+                />
+              )}
+              {!showModal && startGame && (
+                <BlackJackGame
+                  initialPlayerCount={playerCount}
+                  onEndGame={handleEndGame}
+                />
+              )}
+            </>
+          }
         />
-      )}
-      {!showModal && startGame && (
-        <BlackJackGame
-          initialPlayerCount={playerCount}
-          onEndGame={handleEndGame}
-        />
-      )}
-    </>
+      </Routes>
+    </Router>
   );
 };
 
