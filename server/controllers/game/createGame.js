@@ -1,11 +1,24 @@
-const Game = require('../../models/gameModel');
-const { catchAsync } = require('../../utils');
+const Game = require('../../models/game/gameModel');
+const BlackJackGameFactory = require('../../services/BlackJackGameFactory');
+const { catchAsync, signToken } = require('../../utils');
 const { nanoid } = require('nanoid');
+const createPlayer = require('../../utils/createPlayer');
 
 exports.createGame = catchAsync(async (req, res) => {
-  const gameId = nanoid(10);
-  const game = await Game.create({
-    gameId,
+  const { id, deck } = new BlackJackGameFactory();
+  const { playerId, playerHand } = createPlayer([], deck);
+  const playerToken = signToken({ gameId: id, playerId });
+
+  const { gameId } = await Game.create({
+    deck,
+    gameId: id,
+    players: [{ playerId }],
+    endGame: false,
   });
-  res.status(201).json({ gameId: gameId, message: `game: ${game} created` });
+
+  res.status(201).json({
+    gameId,
+    playerToken,
+    playerHand,
+  });
 });

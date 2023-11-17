@@ -5,7 +5,8 @@ import BlackJackGame from '../BlackJackGame/BlackJackGame';
 import Modal from '../Modal/Modal';
 import PlayerSelector from '../Modal/PlayerSelector/PlayerSelector';
 import WinnersElement from '../Modal/WinnersElement/WinnersElement';
-import GameManager from '../GameManager/GameManager';
+
+import StartComponent from '../StartComponent/StartComponent';
 
 const App = () => {
   const { startGame, setStartGame, playerCount, players } = useGame();
@@ -41,9 +42,9 @@ const App = () => {
   };
 
   return (
-    <Router>
+<Router>
       <Routes>
-        <Route path="/" element={<GameManager />} />
+        <Route path="/" element={<StartComponent />} />
 
         <Route
           path="/game"
