@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { gameRoutes } = require('./routes/api');
+const { gameRoutes } = require('./routes/api/game');
 
 const app = express();
 

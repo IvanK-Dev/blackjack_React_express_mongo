@@ -1,9 +1,7 @@
 const { CARD_SUITS, CARD_VALUES } = require('../constants');
-const { nanoid } = require('nanoid');
 
 class BlackJackGameFactory {
   constructor() {
-    this.id = nanoid(10);
     this.deck = [];
     this.createDeck();
     this.shuffleDeck();

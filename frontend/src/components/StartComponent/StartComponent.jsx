@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { publicApi, token } from '../../http';
 
 function StartComponent() {
   const [inputGameId, setInputGameId] = useState('');
   const [createdGameId, setCreatedGameId] = useState('');
   const [inputError, setInputError] = useState(false);
 
-  const handleCreateObject = async () => {
+  const handleCreateGame = async () => {
     try {
-      const response = await axios.get(`http://localhost:3005/api/game/create`);
-      setCreatedGameId(response.data.gameId);
-      localStorage.setItem('playerToken', response.data.playerToken);
+      const {data:{gameId,playerToken}} = await publicApi.get(`/api/game/create`);
+      setCreatedGameId(gameId);
+      localStorage.setItem('playerToken', `Bearer ${playerToken}`);
+      token.set(`Bearer ${playerToken}`)
+
+   
     } catch (error) {
       console.error(error);
     }
@@ -18,8 +22,8 @@ function StartComponent() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3005/api/game/${inputGameId}`
+      const response = await publicApi.get(
+        `/api/game/${inputGameId}`
       );
       localStorage.setItem('playerToken', response.data.playerToken);
     } catch (error) {
@@ -40,7 +44,7 @@ function StartComponent() {
       <h1>Game Management</h1>
       <div>
         <div>
-          <button onClick={handleCreateObject} disabled={inputGameId.length>0}>Create game</button>
+          <button onClick={handleCreateGame} disabled={inputGameId.length>0}>Create game</button>
           {createdGameId && <p>Game ID: {createdGameId}</p>}
         </div>
         <div>
