@@ -55,28 +55,25 @@ gameSchema.pre('save', async function (next) {
     this.dealer.hand = dealCardFromDeck(deck, 2);
     this.deck = deck;
 
-    calculateHand.call(this.players[0]);
-    calculateHand.call(this.dealer);
+    this.players[0].score = calculateHand(this.players[0].hand);
+    this.dealer.score = calculateHand(this.dealer.hand);
   }
   next();
 });
 
-gameSchema.pre(['findOneAndUpdate', 'updateOne'], async function (next) {
+gameSchema.pre(['findOneAndUpdate'], async function (next) {
   const update = this.getUpdate();
-  try {
-    const game = await this.model.findOne(this.getQuery());
 
-    if (update.$push && update.$push['players']) {
-      const newPlayer = game.players[game.players.length - 1];
-      console.log('game.players',game.players)
-      calculateHand.call(newPlayer);
-      await game.save();
-    }
-    if (update.$push && update.$push['dealer.hand']) {
-      calculateHand.call(game.dealer);
-    }
-  } catch (error) {
-    return next(error);
+
+  if (update.$push && update.$push['players']) {
+    const updatePlayer = update.$push.players;
+
+    updatePlayer.score = calculateHand(updatePlayer.hand);
+  }
+
+  if (update.$push && update.$push['dealer']) {
+    const updateDealer = update.$push.dealer;
+    updateDealer.score = calculateHand(updateDealer.hand);
   }
 
   next();

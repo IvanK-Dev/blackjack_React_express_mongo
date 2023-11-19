@@ -1,8 +1,7 @@
-function calculateHand() {
-  console.log('calculateHand this',this)
+function calculateHand(hand) {
   let score = 0;
   let hasAce = false;
-  for (let card of this.hand) {
+  for (let card of hand) {
     const value = card.split('_')[1];
     switch (value) {
       case 'A':
@@ -24,7 +23,7 @@ function calculateHand() {
     score -= 10;
   }
 
-  this.score = score;
+  return score;
 }
 
 module.exports = calculateHand;

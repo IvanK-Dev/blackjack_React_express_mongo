@@ -4,12 +4,14 @@ const createPlayer = require('../../utils/createPlayer');
 
 exports.setPlayerinGame = catchAsync(async (req, res) => {
   const { gameId } = req.params;
+
   const { deck, players } = await Game.findOne({ gameId });
-  const player = createPlayer(players, deck);
-  const { playerId, playerHand } = player;
+
+  const  { playerId, playerHand } = createPlayer(players, deck);
+
   const playerToken = signToken({ gameId, playerId });
-  
-  await Game.updateOne(
+
+  const updatedGame = await Game.findOneAndUpdate(
     { gameId },
     {
       $push: {
@@ -18,10 +20,12 @@ exports.setPlayerinGame = catchAsync(async (req, res) => {
           hand: playerHand,
         },
       },
-    }
+    },
+    { new: true }
   );
+
   res.status(200).json({
     playerToken,
-    playerHand,
+    player:updatedGame.players.at(-1)
   });
 });
