@@ -1,4 +1,4 @@
-const { catchAsync, AppError } = require('../utils');
+const { catchAsync, AppError, clearToken } = require('../utils');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: './.env' });
 

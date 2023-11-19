@@ -1,0 +1,1 @@
+export const selectorPlayerToken=({players})=>players.playerToken

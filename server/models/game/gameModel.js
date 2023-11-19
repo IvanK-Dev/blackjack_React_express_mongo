@@ -49,14 +49,14 @@ gameSchema.pre('save', async function (next) {
   if (this.isNew) {
     const { deck } = new BlackJackGameFactory();
 
-    const { playerId, playerHand } = createPlayer([], deck);
+    // const { playerId, playerHand } = createPlayer([], deck);
     this.gameId = nanoid(10);
-    this.players.push({ playerId, hand: playerHand });
-    this.dealer.hand = dealCardFromDeck(deck, 2);
+    // this.players.push({ playerId, hand: playerHand });
+     this.dealer.hand = dealCardFromDeck(deck, 2);
     this.deck = deck;
 
-    this.players[0].score = calculateHand(this.players[0].hand);
-    this.dealer.score = calculateHand(this.dealer.hand);
+    // this.players[0].score = calculateHand(this.players[0].hand);
+     this.dealer.score = calculateHand(this.dealer.hand);
   }
   next();
 });

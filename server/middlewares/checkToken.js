@@ -10,11 +10,10 @@ exports.checkToken = catchAsync((req, _, next) => {
   }
   const cleanToken = clearToken(token)
 
-  jwt.verify(cleanToken, process.env.JWT_SALT, (err, { gameId, playerId }) => {
+  jwt.verify(cleanToken, process.env.JWT_SALT, (err) => {
     if (err) {
       return next(new AppError(401, 'Unauthorized - Invalid token'));
     }
-
     next();
   });
 });
