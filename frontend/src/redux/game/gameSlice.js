@@ -22,6 +22,7 @@ export const gameSlice = createSlice({
       .addCase(createGameThunk.fulfilled, (state, { payload }) => {
         state.status = STATUS.success;
         state.gameId = payload.gameId;
+        state.playerIdMove = payload.playerIdMove;
 
         state.dealer = payload.dealer;
       })

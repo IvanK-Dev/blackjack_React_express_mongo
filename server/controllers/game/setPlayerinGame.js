@@ -27,5 +27,6 @@ exports.setPlayerinGame = catchAsync(async (req, res) => {
   res.status(200).json({
     gameId,
     playerToken,
+    playerId
   });
 });

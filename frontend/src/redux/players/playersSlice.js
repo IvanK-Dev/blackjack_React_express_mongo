@@ -19,6 +19,7 @@ export const playersSlice = createSlice({
         state.status = STATUS.success;
 
         state.playerToken = `Bearer ${payload.playerToken}`;
+        state.playerId=payload.playerId
       })
       .addCase(createPlayerThunk.rejected, (state) => {
         state.status = STATUS.rejected;

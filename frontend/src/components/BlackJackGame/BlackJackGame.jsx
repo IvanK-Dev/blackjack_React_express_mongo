@@ -12,7 +12,7 @@ import {
   waitUntilPlayerStops,
 } from '../../helpers';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectPlayersArr, selectorPlayerToken } from '../../redux/players/playersSelectors';
+import { selectPlayersArr, selectorPlayerId, selectorPlayerToken } from '../../redux/players/playersSelectors';
 import { selectGameDealer, selectGameId } from '../../redux/game/gameSelectors';
 import { getAllPlayersThunk } from '../../redux/players/playersThunk';
 import { token } from '../../http';
@@ -29,12 +29,14 @@ const BlackJackGame = () => {
   const dealer = useSelector(selectGameDealer);
   const gameId=useSelector(selectGameId)
   const playerToken=useSelector(selectorPlayerToken)
-  const playerId=useSelector(select)
+  const playerId=useSelector(selectorPlayerId)
 
   useEffect(async() => {
     token.set(playerToken);
-    await dispatch(getAllPlayersThunk(gameId))
-  }, []);
+    dispatch(getAllPlayersThunk(gameId))
+  }, [playerToken,dispatch,gameId]);
+
+  if()
 
   // Состояние для отслеживания текущего индекса игрока
 
