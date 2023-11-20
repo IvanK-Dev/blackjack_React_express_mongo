@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { gameInitialState } from './gameInitialState';
 import { STATUS } from '../../constants/status';
-import { createGameThunk, getGameInfoThunk } from './gameThunk';
+import { createGameThunk, dealerGetCard, dealerGetCardThunk, getGameInfoThunk } from './gameThunk';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { addPlayer } from '../players/playersSlice';
@@ -39,6 +39,16 @@ export const gameSlice = createSlice({
         state.dealer = payload.dealer;
       })
       .addCase(getGameInfoThunk.rejected, (state) => {
+        state.status = STATUS.rejected;
+      })
+      .addCase(dealerGetCardThunk.pending, (state) => {
+        state.status = STATUS.loading;
+      })
+      .addCase(dealerGetCardThunk.fulfilled, (state, { payload }) => {
+        state.status = STATUS.success;
+        state.players = payload.game.dealer;
+      })
+      .addCase(dealerGetCardThunk.rejected, (state) => {
         state.status = STATUS.rejected;
       }),
 });

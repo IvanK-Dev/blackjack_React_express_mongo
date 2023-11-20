@@ -7,8 +7,19 @@ export const createGameThunk = createAsyncThunk('createGame', async () => {
   return data;
 });
 
-export const getGameInfoThunk = createAsyncThunk('getGameInfo', async (gameId) => {
-  const { data } = await publicApi.get(`/api/game/${gameId}`);
+export const getGameInfoThunk = createAsyncThunk(
+  'getGameInfo',
+  async (gameId) => {
+    const { data } = await publicApi.get(`/api/game/${gameId}`);
 
-  return data;
-});
+    return data;
+  }
+);
+
+export const dealerGetCardThunk = createAsyncThunk(
+  'dealerGetCard',
+  async (gameId) => {
+    const { data } = await publicApi.get(`/api/game/${gameId}/dealerGetCard`);
+    return data;
+  }
+);

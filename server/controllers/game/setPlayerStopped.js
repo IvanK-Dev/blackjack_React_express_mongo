@@ -10,7 +10,7 @@ exports.setPlayerStopped = catchAsync(async (req, res) => {
   console.log('gameId', gameId);
   console.log('playerId', playerId);
 
-  const { playerIdMove } = await Game.findOne({ gameId });
+  const {players, playerIdMove } = await Game.findOne({ gameId });
 
   const updatedGame = await Game.findOneAndUpdate(
     { gameId, 'players.playerId': playerId },
@@ -24,6 +24,6 @@ exports.setPlayerStopped = catchAsync(async (req, res) => {
   );
 
   res.status(200).json({
-    player: updatedGame.players.at(playerId - 1),
+    game: updatedGame,
   });
 });

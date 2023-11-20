@@ -1,4 +1,5 @@
 const { createGame } = require('./createGame');
+const { dealerGetCard } = require('./dealerGetCard');
 const { getAllGames } = require('./getAllGames');
 const { getAllPlayers } = require('./getAllPlayers');
 const { getCardFromDeck } = require('./getCardFromDeck');
@@ -14,4 +15,5 @@ module.exports = {
   setPlayerStopped,
   getAllPlayers,
   getGameInfo,
+  dealerGetCard,
 };

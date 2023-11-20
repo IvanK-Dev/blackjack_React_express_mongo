@@ -7,6 +7,7 @@ const {
   setPlayerStopped,
   getAllPlayers,
   getGameInfo,
+  dealerGetCard,
 } = require('../../../controllers/game');
 const {
   checkToken,
@@ -21,11 +22,12 @@ router.route('/create').get(createGame);
 router.route('/:gameId/getAllPlayers').get(checkToken, getAllPlayers);
 
 router.route('/:gameId/getCard').get(checkToken,checkPlayerIdForAction, getCardFromDeck);
+router.route('/:gameId/dealerGetCard').get(dealerGetCard);
 
 router.route('/:gameId/playerStop').get(checkToken,checkPlayerIdForAction, setPlayerStopped);
 
 router
-  .route('/:gameId/craetePlayer')
+  .route('/:gameId/createPlayer')
   .get(checkExistingToken, checkPlayersCuontity, setPlayerinGame);
 
   router.route('/:gameId').get(getGameInfo);

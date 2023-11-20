@@ -10,7 +10,7 @@ const Schema = mongoose.Schema;
 const gameSchema = new Schema(
   {
     gameId: { type: String },
-    playerIdMove:{type:Number,default:1},
+    playerIdMove: { type: Number, default: 1 },
     deck: { type: Array },
 
     players: {
@@ -50,21 +50,16 @@ gameSchema.pre('save', async function (next) {
   if (this.isNew) {
     const { deck } = new BlackJackGameFactory();
 
-    // const { playerId, playerHand } = createPlayer([], deck);
     this.gameId = nanoid(10);
-    // this.players.push({ playerId, hand: playerHand });
-     this.dealer.hand = dealCardFromDeck(deck, 2);
+    this.dealer.hand = dealCardFromDeck(deck, 2);
     this.deck = deck;
-
-    // this.players[0].score = calculateHand(this.players[0].hand);
-     this.dealer.score = calculateHand(this.dealer.hand);
+    this.dealer.score = calculateHand(this.dealer.hand);
   }
   next();
 });
 
 gameSchema.pre(['findOneAndUpdate'], async function (next) {
   const update = this.getUpdate();
-
 
   if (update.$push && update.$push['players']) {
     const updatePlayer = update.$push.players;

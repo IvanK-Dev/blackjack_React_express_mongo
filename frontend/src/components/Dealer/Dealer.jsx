@@ -1,4 +1,9 @@
+import { useDispatch, useSelector } from 'react-redux';
 import CardsList from '../CardsList/CardsList';
+import { useEffect } from 'react';
+import { dealerGetCardThunk } from '../../redux/game/gameThunk';
+import { selectPlayersArr } from '../../redux/players/playersSelectors';
+import { selectGameId } from '../../redux/game/gameSelectors';
 
 /**
  * Компонент, представляющий дилера в игре.
@@ -9,8 +14,24 @@ import CardsList from '../CardsList/CardsList';
  * @param {number} props.participant.score - Очки дилера.
  * @param {boolean} props.participant.visibleScore - Видимость счета дилера.
  */
-const Dealer = ({ participant: { hand, score, visibleScore } }) => {
-  const scoreVisibility = () => (visibleScore ? 'visible' : 'hidden');
+const Dealer = ({ participant: { hand, score, stopped } }) => {
+  const players = useSelector(selectPlayersArr);
+  const gameId = useSelector(selectGameId);
+  const dispatch = useDispatch();
+
+
+  const scoreVisibility = () => (stopped ? 'visible' : 'hidden');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Вызываем действие для дилера, чтобы он взял карту
+      dispatch(dealerGetCardThunk(gameId));
+    };
+
+    // Проверяем, все ли игроки остановились, и дилер не остановился
+    if (!stopped && players.every((player) => player.stopped)) fetchData();
+
+  }, [dispatch, gameId, stopped, players]);
 
   return (
     hand && (
@@ -22,7 +43,7 @@ const Dealer = ({ participant: { hand, score, visibleScore } }) => {
         <p
           id="dealer-score"
           className="score"
-          style={{ visibility: scoreVisibility }}
+          style={{ visibility: scoreVisibility() }}
         >
           Очки: {score}
         </p>

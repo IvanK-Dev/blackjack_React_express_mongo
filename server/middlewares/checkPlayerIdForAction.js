@@ -1,3 +1,4 @@
+const Game = require('../models/game/gameModel');
 const { catchAsync, AppError, clearToken } = require('../utils');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: './.env' });
@@ -8,10 +9,8 @@ exports.checkPlayerIdForAction = catchAsync(async (req, _, next) => {
   const { gameId, playerId } = jwt.decode(cleanToken, process.env.JWT_SALT);
   const { playerIdMove } = await Game.findOne({ gameId });
 
-  console.log('playerIdMove', playerIdMove);
-  console.log('playerId', playerId);
 
-  if (playerIdMove === playerId) next();
+  if (playerIdMove === playerId) return next();
 
-  next(new AppError(403, "it's not your turn now"));
+  return next(new AppError(403, "it's not your turn now"));
 });

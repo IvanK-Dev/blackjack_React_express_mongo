@@ -43,8 +43,6 @@ const App = () => {
     //setStartGame(false);
   };
 
-  console.log('gameStart', gameStart);
-
   useEffect(() => {
     // Программное перенаправление в зависимости от значения gameStart
     if (gameStart) {

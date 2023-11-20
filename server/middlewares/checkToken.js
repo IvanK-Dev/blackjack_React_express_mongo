@@ -4,7 +4,6 @@ require('dotenv').config({ path: './.env' });
 
 exports.checkToken = catchAsync((req, _, next) => {
   const token = req.headers.authorization;
-
   if (!token) {
     return next(new AppError(401, 'Unauthorized -  Token is missing'));
   }
@@ -14,6 +13,6 @@ exports.checkToken = catchAsync((req, _, next) => {
     if (err) {
       return next(new AppError(401, 'Unauthorized - Invalid token'));
     }
-    next();
+    return next();
   });
 });

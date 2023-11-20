@@ -9,15 +9,15 @@ import CardsList from '../CardsList/CardsList';
  */
 const Player = ({ player }) => {
   // Извлечение необходимых данных из объекта игрока
-  const { id, hand, score } = player;
+  const { playerId, hand, score } = player;
 
   return (
-    <div id={`player-${id}-area`} className={'player-area area'}>
-      <h2>{`Игрок ${id}`}</h2>
-      <div id={`player-${id}-hand`} className={'hand'}>
+    <div id={`player-${playerId}-area`} className={'player-area area'}>
+      <h2>{`Игрок ${playerId}`}</h2>
+      <div id={`player-${playerId}-hand`} className={'hand'}>
         <CardsList cards={hand} />
       </div>
-      <p id={`player-${id}-score`} className={'score'}>
+      <p id={`player-${playerId}-score`} className={'score'}>
         Очки: {score}
       </p>
       <PlayerButtons player={player} />

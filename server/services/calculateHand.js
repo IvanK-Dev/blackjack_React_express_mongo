@@ -2,6 +2,7 @@ function calculateHand(hand) {
   let score = 0;
   let hasAce = false;
   for (let card of hand) {
+
     const value = card.split('_')[1];
     switch (value) {
       case 'A':

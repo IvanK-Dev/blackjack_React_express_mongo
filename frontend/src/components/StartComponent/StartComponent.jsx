@@ -68,6 +68,9 @@ function StartComponent() {
     dispatch(toggleStartGame());
   };
 
+
+
+
   return (
     <div>
       <h1>Game Management</h1>
@@ -100,6 +103,7 @@ function StartComponent() {
           </button>
         )}
       </div>
+
     </div>
   );
 }

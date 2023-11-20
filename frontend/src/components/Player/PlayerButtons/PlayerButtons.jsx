@@ -1,4 +1,12 @@
-import { useGame } from '../../../context/gameContext';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getAllPlayersThunk,
+  getCardThunk,
+  setPlayerStopped,
+} from '../../../redux/players/playersThunk';
+import { selectGameId } from '../../../redux/game/gameSelectors';
+import { token } from '../../../http';
+import { selectorPlayerToken } from '../../../redux/players/playersSelectors';
 
 /**
  * Компонент кнопок для игрока.
@@ -7,8 +15,9 @@ import { useGame } from '../../../context/gameContext';
  * @param {Object} props.player - Информация о текущем игроке.
  */
 const PlayerButtons = ({ player }) => {
-  // Использование пользовательского хука контекста игры
-  const { deck, setDeck } = useGame();
+  const dispatch = useDispatch();
+  const gameId = useSelector(selectGameId);
+  const playerToken = useSelector(selectorPlayerToken);
 
   // Информация о кнопках
   const buttonsInfo = [
@@ -18,27 +27,20 @@ const PlayerButtons = ({ player }) => {
 
   // Обработчик клика по кнопке
   const handleButtonClick = (evt) => {
-    const gameDeck = [...deck];
     switch (evt.target.id) {
       case buttonsInfo.at(0).id:
-        player.dealCard(gameDeck);
-        player.calculateHand();
+        dispatch(getCardThunk(gameId));
         break;
       case buttonsInfo.at(1).id:
-        player.setStopped();
+        dispatch(setPlayerStopped(gameId));
         break;
 
       default:
         break;
     }
-    // Обновление колоды в контексте игры
-    setDeck(gameDeck);
   };
 
-  // Если у игрока сумма очков больше или равна 21, он автоматически останавливается
-  if (player.score >= 21) {
-    player.stopped = true;
-  }
+
 
   return (
     <ul className={'player-button-list'}>
@@ -48,7 +50,7 @@ const PlayerButtons = ({ player }) => {
             type="button"
             id={id}
             onClick={handleButtonClick}
-            disabled={player.stopped}
+             disabled={player.stopped}
           >
             {text}
           </button>
