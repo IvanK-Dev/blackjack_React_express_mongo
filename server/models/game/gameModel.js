@@ -10,6 +10,7 @@ const Schema = mongoose.Schema;
 const gameSchema = new Schema(
   {
     gameId: { type: String },
+    playerIdMove:{type:Number,default:1},
     deck: { type: Array },
 
     players: {

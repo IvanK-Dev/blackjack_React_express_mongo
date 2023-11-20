@@ -4,6 +4,7 @@ import { STATUS } from '../../constants/status';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { createPlayerThunk, getAllPlayersThunk } from './playersThunk';
+import { token } from '../../http';
 
 export const playersSlice = createSlice({
   name: 'players',
@@ -16,7 +17,8 @@ export const playersSlice = createSlice({
       })
       .addCase(createPlayerThunk.fulfilled, (state, { payload }) => {
         state.status = STATUS.success;
-        state.playerToken=payload.playerToken;
+
+        state.playerToken = `Bearer ${payload.playerToken}`;
       })
       .addCase(createPlayerThunk.rejected, (state) => {
         state.status = STATUS.rejected;
@@ -26,11 +28,11 @@ export const playersSlice = createSlice({
       })
       .addCase(getAllPlayersThunk.fulfilled, (state, { payload }) => {
         state.status = STATUS.success;
-        state.players=payload.players;
+        state.players = payload.players;
       })
       .addCase(getAllPlayersThunk.rejected, (state) => {
         state.status = STATUS.rejected;
-      })
+      }),
 });
 
 export const playersReducer = persistReducer(

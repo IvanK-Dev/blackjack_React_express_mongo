@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { privateApi, publicApi } from '../../http';
+import { privateApi, publicApi, token } from '../../http';
 
 export const createPlayerThunk = createAsyncThunk(
   'createPlayer',
   async (gameId) => {
-    const { data } = await publicApi.get(`/api/game/${gameId}`);
+    const { data } = await publicApi.get(`/api/game/${gameId}/craetePlayer`);
 
     return data;
   }

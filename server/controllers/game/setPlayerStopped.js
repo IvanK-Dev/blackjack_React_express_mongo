@@ -1,14 +1,16 @@
 const Game = require('../../models/game/gameModel');
-const jwt=require('jsonwebtoken')
-const { catchAsync, clearToken } = require('../../utils');
+const jwt = require('jsonwebtoken');
+const { catchAsync, clearToken, chooseNextPlayer } = require('../../utils');
 
 exports.setPlayerStopped = catchAsync(async (req, res) => {
   const cleanToken = clearToken(req.headers.authorization);
 
   const { gameId, playerId } = jwt.decode(cleanToken);
 
-  console.log('gameId', gameId)
-  console.log('playerId', playerId)
+  console.log('gameId', gameId);
+  console.log('playerId', playerId);
+
+  const { playerIdMove } = await Game.findOne({ gameId });
 
   const updatedGame = await Game.findOneAndUpdate(
     { gameId, 'players.playerId': playerId },
@@ -16,6 +18,7 @@ exports.setPlayerStopped = catchAsync(async (req, res) => {
       $set: {
         'players.$.stopped': true,
       },
+      playerIdMove: chooseNextPlayer(players, playerIdMove),
     },
     { new: true }
   );

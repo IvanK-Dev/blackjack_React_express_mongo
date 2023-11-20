@@ -6,3 +6,9 @@ export const createGameThunk = createAsyncThunk('createGame', async () => {
 
   return data;
 });
+
+export const getGameInfoThunk = createAsyncThunk('getGameInfo', async (gameId) => {
+  const { data } = await publicApi.get(`/api/game/${gameId}`);
+
+  return data;
+});

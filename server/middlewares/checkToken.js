@@ -8,7 +8,7 @@ exports.checkToken = catchAsync((req, _, next) => {
   if (!token) {
     return next(new AppError(401, 'Unauthorized -  Token is missing'));
   }
-  const cleanToken = clearToken(token)
+  const cleanToken = clearToken(token);
 
   jwt.verify(cleanToken, process.env.JWT_SALT, (err) => {
     if (err) {

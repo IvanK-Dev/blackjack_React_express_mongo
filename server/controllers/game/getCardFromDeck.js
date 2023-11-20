@@ -1,6 +1,11 @@
 const Game = require('../../models/game/gameModel');
 const jwt = require('jsonwebtoken');
-const { catchAsync, dealCardFromDeck, clearToken } = require('../../utils');
+const {
+  catchAsync,
+  dealCardFromDeck,
+  clearToken,
+  chooseNextPlayer,
+} = require('../../utils');
 const calculateHand = require('../../services/calculateHand');
 
 exports.getCardFromDeck = catchAsync(async (req, res) => {
@@ -11,7 +16,9 @@ exports.getCardFromDeck = catchAsync(async (req, res) => {
 
   const game = await Game.findOne({ gameId });
 
-  const deck = game.deck;
+  const { deck, playerIdMove, players } = game;
+
+  playerIdMove = chooseNextPlayer(players, playerIdMove);
 
   const newCard = dealCardFromDeck(deck, 1);
 
@@ -19,7 +26,7 @@ exports.getCardFromDeck = catchAsync(async (req, res) => {
     { gameId, 'players.playerId': playerId },
     {
       $push: { 'players.$.hand': { $each: newCard } },
-      $set: { deck },
+      $set: { deck, playerIdMove },
     },
     {
       new: true,
@@ -46,7 +53,6 @@ exports.getCardFromDeck = catchAsync(async (req, res) => {
       new: true,
     }
   ).then((data) => data.players.at(playerId - 1));
-
 
   res.status(200).json({ newCard, player: updatedPlayer });
 });

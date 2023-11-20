@@ -1,21 +1,23 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
-import { useGame } from '../../context/gameContext';
+import { useEffect, useState } from 'react';
+import { Link, Route, Routes, BrowserRouter, useNavigate } from 'react-router-dom';
 import BlackJackGame from '../BlackJackGame/BlackJackGame';
 import Modal from '../Modal/Modal';
 import PlayerSelector from '../Modal/PlayerSelector/PlayerSelector';
 import WinnersElement from '../Modal/WinnersElement/WinnersElement';
 
 import StartComponent from '../StartComponent/StartComponent';
+import { useSelector } from 'react-redux';
+import { selectGameStart } from '../../redux/game/gameSelectors';
 
 const App = () => {
-  const { startGame, setStartGame, playerCount, players } = useGame();
   const [showModal, setShowModal] = useState(true);
   // Состояние для управления содержимым модального окна и текстом кнопки
   const [modalInfo, setModalInfo] = useState({
     component: <PlayerSelector />,
     buttonText: 'start',
   });
+  const gameStart = useSelector(selectGameStart);
+  const navigate = useNavigate();
 
   /**
    * Обработчик нажатия кнопки начала игры, скрывает модальное окно.
@@ -38,36 +40,25 @@ const App = () => {
 
     // Показ модального окна и сброс игры
     setShowModal(true);
-    setStartGame(false);
+    //setStartGame(false);
   };
 
-  return (
-<Router>
-      <Routes>
-        <Route path="/" element={<StartComponent />} />
+  console.log('gameStart', gameStart);
 
-        <Route
-          path="/game"
-          element={
-            <>
-              {showModal && (
-                <Modal
-                  component={modalInfo.component}
-                  buttonText={modalInfo.buttonText}
-                  onClick={handleStartGame}
-                />
-              )}
-              {!showModal && startGame && (
-                <BlackJackGame
-                  initialPlayerCount={playerCount}
-                  onEndGame={handleEndGame}
-                />
-              )}
-            </>
-          }
-        />
+  useEffect(() => {
+    // Программное перенаправление в зависимости от значения gameStart
+    if (gameStart) {
+      navigate('/game');
+    } else {
+      navigate('/');
+    }
+  }, [gameStart, navigate]);
+
+  return (
+      <Routes>
+        <Route path="/" element={<>{!gameStart && <StartComponent />}</>} />
+        <Route path="/game" element={<>{gameStart &&  <BlackJackGame /> }</>}/>
       </Routes>
-    </Router>
   );
 };
 
