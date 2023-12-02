@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createGameThunk, getGameInfoThunk } from '../../redux/game/gameThunk';
-import {
-  createPlayerThunk,
-  getAllPlayersThunk,
-} from '../../redux/players/playersThunk';
+import { createPlayerThunk } from '../../redux/players/playersThunk';
 import { selectGameId, selectGameStatus } from '../../redux/game/gameSelectors';
 import { token } from '../../http';
 import {
@@ -18,6 +15,11 @@ import {
   createPlayerLogThunk,
 } from '../../redux/logging/logThunk';
 
+/**
+ * Компонент начального экрана управления игрой.
+ * @component
+ * @returns {JSX.Element} Элемент компонента StartComponent.
+ */
 function StartComponent() {
   const [inputGameId, setInputGameId] = useState('');
   const [inputError, setInputError] = useState(false);
@@ -29,24 +31,46 @@ function StartComponent() {
 
   const dispatch = useDispatch();
 
+  // Устанавливаем токен игрока при изменении
   useEffect(() => {
     token.set(playerToken);
   }, [playerToken]);
 
-  const handleCreateGame = async (evt) => {
-    evt.preventDefault();
-    try {
-      const result = await dispatch(createGameThunk()).unwrap();
-      await dispatch(createLogThunk(result.gameId)).unwrap();
-      const player = await dispatch(createPlayerThunk(result.gameId)).unwrap();
-      const { gameId, playerId, hand } = player;
-      await dispatch(createPlayerLogThunk({ gameId, playerId, hand })).unwrap();
-    } catch (error) {
-      //input toast
-    }
-  };
+  /**
+   * Обработчик создания новой игры.
+   * @async
+   * @function
+   * @param {Event} evt - Событие клика.
+   * @returns {Promise<void>}
+   */
+  const handleCreateGame = useCallback(
+    async (evt) => {
+      evt.preventDefault();
+      try {
+        const result = await dispatch(createGameThunk()).unwrap();
+        await dispatch(createLogThunk(result.gameId)).unwrap();
+        const player = await dispatch(
+          createPlayerThunk(result.gameId)
+        ).unwrap();
+        const { gameId, playerId, hand } = player;
+        await dispatch(
+          createPlayerLogThunk({ gameId, playerId, hand })
+        ).unwrap();
+      } catch (error) {
+        //input toast
+      }
+    },
+    [dispatch]
+  );
 
-  const handleJoinToGame = async (evt) => {
+  /**
+   * Обработчик присоединения к существующей игре.
+   * @async
+   * @function
+   * @param {Event} evt - Событие клика.
+   * @returns {Promise<void>}
+   */
+  const handleJoinToGame = useCallback(async (evt) => {
     console.log('handleJoinToGame');
     evt.preventDefault();
     try {
@@ -55,6 +79,7 @@ function StartComponent() {
       ).unwrap();
       await dispatch(createPlayerLogThunk({ gameId, playerId, hand })).unwrap();
 
+      // Проверка наличия ошибок ввода перед запросом информации об игре
       if (!inputError) {
         console.log('handleJoinToGame inputError');
 
@@ -63,19 +88,31 @@ function StartComponent() {
     } catch (error) {
       //input toast
     }
-  };
+  }, []);
 
-  const handleInputChange = async (event) => {
+  /**
+   * Обработчик изменения ввода Game ID.
+   * @function
+   * @param {Event} event - Событие изменения ввода.
+   * @returns {void}
+   */
+  const handleInputChange = useCallback(async (event) => {
     const newInputGameId = event.target.value;
     setInputGameId(newInputGameId);
 
     // Проверка на ограничение в 10 символов и установка состояния ошибки
     setInputError(newInputGameId.length !== 10);
-  };
+  }, []);
 
-  const handleStartGame = async () => {
+  /**
+   * Обработчик запуска игры.
+   * @function
+   * @async
+   * @returns {Promise<void>}
+   */
+  const handleStartGame = useCallback(async () => {
     dispatch(toggleStartGame());
-  };
+  }, [dispatch]);
 
   return (
     <div>

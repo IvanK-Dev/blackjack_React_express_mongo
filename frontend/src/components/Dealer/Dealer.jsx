@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import CardsList from '../CardsList/CardsList';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   dealerGetCardThunk,
   getGameInfoThunk,
@@ -9,44 +9,53 @@ import { selectPlayersArr } from '../../redux/players/playersSelectors';
 import { selectGameDealer, selectGameId } from '../../redux/game/gameSelectors';
 
 /**
- * Компонент, представляющий дилера в игре.
+ * Компонент, представляющий дилера в игре BlackJack.
  * @component
- * @param {Object} props - Свойства компонента.
- * @param {Object} props.participant - Информация о дилере.
- * @param {Array} props.participant.hand - Карты в руке дилера.
- * @param {number} props.participant.score - Очки дилера.
- * @param {boolean} props.participant.visibleScore - Видимость счета дилера.
+ * @returns {JSX.Element|null} Элемент компонента Dealer или null, если информация о руке дилера отсутствует.
  */
-const Dealer = (/*{ participant: { hand, score, stopped } }*/) => {
+const Dealer = () => {
   const players = useSelector(selectPlayersArr);
   const gameId = useSelector(selectGameId);
   const { hand, score, stopped } = useSelector(selectGameDealer);
   const dispatch = useDispatch();
 
-  console.log('stopped', stopped);
-
+  /**
+   * Функция определения видимости счета дилера в зависимости от количества карт в руке.
+   * @function
+   * @returns {string} Видимость счета (visible или hidden).
+   */
   const scoreVisibility = () => (hand.length > 2 ? 'visible' : 'hidden');
 
-  const fetchData = async () => {
-    // Вызываем действие для дилера, чтобы он взял карту
+  /**
+   * Функция для получения карты дилера и обновления информации о текущей игре.
+   * @async
+   * @function
+   * @returns {Promise<void>}
+   */
+  const fetchData = useCallback(async () => {
     await dispatch(dealerGetCardThunk(gameId)).unwrap();
     await dispatch(getGameInfoThunk(gameId)).unwrap();
-  };
+  }, [dispatch,gameId]);
 
   useEffect(() => {
-    // Проверяем, все ли игроки остановились, и дилер не остановился
-    if (
-      !stopped &&
-      players.length &&
-      players.every((player) => player.stopped)
-    ) {
-      const timeoutId = setTimeout(() => {
-        fetchData();
-      }, 1000);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [dispatch, gameId, stopped, players, hand]);
+    /**
+     * Проверка и запуск получения карты дилера, если все игроки остановились и дилер не остановился.
+     * @function
+     * @returns {void}
+     */
+    const checkAndFetchData = () => {
+      if (!stopped && players.length && players.every((player) => player.stopped)) {
+        const timeoutId = setTimeout(() => {
+          fetchData();
+        }, 1000);
+        return () => clearTimeout(timeoutId);
+      }
+    };
 
+    checkAndFetchData();
+  }, [dispatch, gameId, stopped, players, hand, fetchData]);
+
+  // Если информация о руке дилера доступна, отрисовываем компонент
   return (
     hand && (
       <div id="dealer-area" className="area">

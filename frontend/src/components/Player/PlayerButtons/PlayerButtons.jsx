@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  getAllPlayersThunk,
   getCardThunk,
   setPlayerStopped,
 } from '../../../redux/players/playersThunk';
@@ -8,11 +7,7 @@ import {
   selectGameId,
   selectPlayerIdMove,
 } from '../../../redux/game/gameSelectors';
-import { token } from '../../../http';
-import {
-  selectPlayerId,
-  selectPlayerToken,
-} from '../../../redux/players/playersSelectors';
+import { useCallback } from 'react';
 
 /**
  * Компонент кнопок для игрока.
@@ -23,7 +18,6 @@ import {
 const PlayerButtons = ({ player }) => {
   const dispatch = useDispatch();
   const gameId = useSelector(selectGameId);
-  const playerToken = useSelector(selectPlayerToken);
   const playerIdMove = useSelector(selectPlayerIdMove);
   const { playerId } = player;
 
@@ -34,7 +28,7 @@ const PlayerButtons = ({ player }) => {
   ];
 
   // Обработчик клика по кнопке
-  const handleButtonClick = (evt) => {
+  const handleButtonClick =useCallback( (evt) => {
     switch (evt.target.id) {
       case buttonsInfo.at(0).id:
         dispatch(getCardThunk(gameId));
@@ -46,15 +40,7 @@ const PlayerButtons = ({ player }) => {
       default:
         break;
     }
-  };
-
-  // console.log('playerId', playerId);
-  // console.log('playerIdMove', playerIdMove);
-  // console.log('player.stopped', player.stopped);
-  // console.log(
-  //   '!(playerId===playerIdMove&&player.stopped)',
-  //   !(playerId === playerIdMove && !player.stopped)
-  // );
+  },[dispatch]);
 
   return (
     <ul className={'player-button-list'}>
