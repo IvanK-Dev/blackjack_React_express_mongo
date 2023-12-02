@@ -1,7 +1,7 @@
 const Game = require('../../models/game/gameModel');
-const { catchAsync, signToken } = require('../../utils');
+const { catchAsync } = require('../../utils');
 
-exports.createGame = catchAsync(async (req, res) => {
+exports.createGame = catchAsync(async (_, res) => {
   const { gameId, dealer ,playerIdMove} = await Game.create({
     endGame: false,
   });

@@ -1,22 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
-import BlackJackGameFactory from '../../services/BlackJackGameFactory';
-import DealerFactory from '../../services/DealerFactory';
+import { useEffect } from 'react';
 import Dealer from '../Dealer/Dealer';
 import Player from '../Player/Player';
-import BotPlayerFactory from '../../services/BotPlayerFactory';
-import BotPlayer from '../BotPlayer/BotPlayer';
-import {
-  dealerOrBotDrawCards,
-  delay,
-  waitUntilPlayerBust,
-  waitUntilPlayerStops,
-} from '../../helpers';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectPlayersArr,
-  selectorPlayerId,
-  selectorPlayerStatus,
-  selectorPlayerToken,
+  selectPlayerId,
+  selectPlayerStatus,
+  selectPlayerToken,
 } from '../../redux/players/playersSelectors';
 import {
   selectGameDealer,
@@ -27,7 +17,9 @@ import { getAllPlayersThunk } from '../../redux/players/playersThunk';
 import { token } from '../../http';
 import Loader from '../Loader/Loader';
 import { STATUS } from '../../constants/status';
-import { dealerGetCardThunk } from '../../redux/game/gameThunk';
+import {
+  getGameInfoThunk,
+} from '../../redux/game/gameThunk';
 
 /**
  * Компонент, представляющий игру.
@@ -40,23 +32,21 @@ const BlackJackGame = () => {
   const players = useSelector(selectPlayersArr);
   const dealer = useSelector(selectGameDealer);
   const gameId = useSelector(selectGameId);
-  const playerToken = useSelector(selectorPlayerToken);
-  const playerId = useSelector(selectorPlayerId);
-  const gameStart = useSelector(selectGameStart);
-  const playersStatus = useSelector(selectorPlayerStatus);
+  const playerToken = useSelector(selectPlayerToken);
+  const playersStatus = useSelector(selectPlayerStatus);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('fetchData');
+      // console.log('fetchData');
       token.set(playerToken);
       dispatch(getAllPlayersThunk(gameId));
+      await dispatch(getGameInfoThunk(gameId)).unwrap();
     };
 
     fetchData();
   }, [dispatch, gameId, playerToken]);
 
   if (!players || playersStatus === STATUS.loading) return <Loader />;
-
 
   return (
     // Отрисовка компонента, если есть игроки

@@ -5,7 +5,7 @@ export const createPlayerThunk = createAsyncThunk(
   'createPlayer',
   async (gameId) => {
     const { data } = await publicApi.get(`/api/game/${gameId}/createPlayer`);
-
+    console.log('createPlayer',data)
     return data;
   }
 );
@@ -14,7 +14,6 @@ export const getAllPlayersThunk = createAsyncThunk(
   'getAllPlayers',
   async (gameId) => {
     const { data } = await privateApi.get(`/api/game/${gameId}/getAllPlayers`);
-    console.log('getAllPlayers players',data.players)
 
     return data;
   }

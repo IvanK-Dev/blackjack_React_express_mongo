@@ -1,5 +1,8 @@
 import PlayerButtons from './PlayerButtons/PlayerButtons';
 import CardsList from '../CardsList/CardsList';
+import { selectPlayerIdMove } from '../../redux/game/gameSelectors';
+import { useSelector } from 'react-redux';
+import { selectPlayerId } from '../../redux/players/playersSelectors';
 
 /**
  * Компонент, представляющий игрока.
@@ -8,6 +11,8 @@ import CardsList from '../CardsList/CardsList';
  * @param {Object} props.player - Информация о текущем игроке.
  */
 const Player = ({ player }) => {
+  const playerIdScreen = useSelector(selectPlayerId);
+
   // Извлечение необходимых данных из объекта игрока
   const { playerId, hand, score } = player;
 
@@ -20,7 +25,7 @@ const Player = ({ player }) => {
       <p id={`player-${playerId}-score`} className={'score'}>
         Очки: {score}
       </p>
-      <PlayerButtons player={player} />
+      {playerId === playerIdScreen && <PlayerButtons player={player} />}
     </div>
   );
 };

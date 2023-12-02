@@ -3,6 +3,11 @@ import useToggle from '../../hooks/useToggle.js';
 import css from './Modal.module.css';
 import { useState } from 'react';
 import { useGame } from '../../context/gameContext.js';
+import { useDispatch } from 'react-redux';
+import { clearGame } from '../../redux/game/gameSlice.js';
+import { clearPlayers } from '../../redux/players/playersSlice.js';
+import WinnersElement from './WinnersElement/WinnersElement.jsx';
+import { useEffect } from 'react';
 
 /**
  * Компонент модального окна.
@@ -12,36 +17,41 @@ import { useGame } from '../../context/gameContext.js';
  * @param {string} props.buttonText - Текст кнопки в модальном окне.
  * @param {Function} props.onClick - Обработчик события клика по кнопке.
  */
-const Modal = ({ component, buttonText, onClick }) => {
+const Modal = ({ onClick }) => {
   // Состояние для управления видимостью модального окна
   const [hidden, setHidden] = useState(false);
   // Хук для управления открытием/закрытием модального окна
   const { isOpen, onClose } = useToggle(true);
-  // Использование пользовательского хука контекста игры
-  const { startGame, setStartGame } = useGame();
+  const dispatch = useDispatch();
 
   // Обработчик клика по кнопке в модальном окне
   const handleButtonClick = () => {
     setHidden(!hidden);
     setTimeout(() => {
-      onClose(); // Закрытие модального окна
       onClick();
-      setStartGame(!startGame); // Изменение статуса игры
+      onClose(); // Закрытие модального окна
     }, 300); // Задержка пока отрабатывает css
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearGame());
+      dispatch(clearPlayers());
+    };
+  }, [dispatch]);
 
   // Если модальное окно закрыто, не отображаем его
   if (!isOpen) return null;
 
   return createPortal(
     <div className={`${css.modal} ${hidden ? css.hidden : ''}`}>
-      {component}
+      <WinnersElement />
       <button
         type="button"
         className={css.modal__button}
         onClick={handleButtonClick}
       >
-        {buttonText}
+        Next Game
       </button>
     </div>,
     document.getElementById('portal-root')

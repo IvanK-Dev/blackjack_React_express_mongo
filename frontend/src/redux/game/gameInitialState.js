@@ -4,4 +4,5 @@ export const gameInitialState = {
   status: STATUS.idle,
   gameId: null,
   startGame: false,
+  endGame:false
 };

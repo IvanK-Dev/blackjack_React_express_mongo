@@ -1,4 +1,4 @@
 const chooseNextPlayer = (players, playerIdMove) =>
-  players.length < playerIdMove ? playerIdMove++ : (playerIdMove = 1);
+  players.length > playerIdMove ? playerIdMove + 1 : 1;
 
-module.exports=chooseNextPlayer
+module.exports = chooseNextPlayer;

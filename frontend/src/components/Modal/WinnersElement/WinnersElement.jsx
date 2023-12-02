@@ -1,6 +1,10 @@
-import DealerFactory from '../../../services/DealerFactory';
+import { useSelector } from 'react-redux';
+import { selectPlayersArr } from '../../../redux/players/playersSelectors';
+import { selectGameDealer } from '../../../redux/game/gameSelectors';
 
-const WinnersElement = ({ players }) => {
+const WinnersElement = () => {
+  const players = useSelector(selectPlayersArr);
+  const dealer = useSelector(selectGameDealer);
   // Фильтрация игроков с количеством очков <= 21
   let filteredPlayers = players.filter((player) => player.score <= 21);
 
@@ -10,17 +14,22 @@ const WinnersElement = ({ players }) => {
   // Фильтрация игроков с количеством очков, равным максимальному
   filteredPlayers = players.filter((player) => player.score === winScore);
 
-  return (
-    <div className="winners">
-      {filteredPlayers.map((player) => (
-        <p key={player.id}>
-          {player instanceof DealerFactory
-            ? `Диллер выиграл. Очки: ${player.score}`
-            : `Игрок ${player.id} выиграл. Очки: ${player.score}`}
-        </p>
-      ))}
-    </div>
-  );
+  const winPlayersArr = filteredPlayers.map(({ playerId, score }) => (
+    <p key={playerId}>
+      Игрок {playerId} выиграл. Очки: {score}
+    </p>
+  ));
+
+  if (dealer.score <= 21 && dealer.score >= winScore) {
+    return (
+      <div className="winners">
+        <p> Диллер выиграл. Очки: {dealer.score}</p>
+        {dealer.score === winScore && winPlayersArr}
+      </div>
+    );
+  }
+
+  return <div className="winners">{winPlayersArr}</div>;
 };
 
 export default WinnersElement;

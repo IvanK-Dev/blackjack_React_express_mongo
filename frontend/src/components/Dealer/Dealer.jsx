@@ -1,9 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import CardsList from '../CardsList/CardsList';
 import { useEffect } from 'react';
-import { dealerGetCardThunk } from '../../redux/game/gameThunk';
+import {
+  dealerGetCardThunk,
+  getGameInfoThunk,
+} from '../../redux/game/gameThunk';
 import { selectPlayersArr } from '../../redux/players/playersSelectors';
-import { selectGameId } from '../../redux/game/gameSelectors';
+import { selectGameDealer, selectGameId } from '../../redux/game/gameSelectors';
 
 /**
  * Компонент, представляющий дилера в игре.
@@ -14,24 +17,35 @@ import { selectGameId } from '../../redux/game/gameSelectors';
  * @param {number} props.participant.score - Очки дилера.
  * @param {boolean} props.participant.visibleScore - Видимость счета дилера.
  */
-const Dealer = ({ participant: { hand, score, stopped } }) => {
+const Dealer = (/*{ participant: { hand, score, stopped } }*/) => {
   const players = useSelector(selectPlayersArr);
   const gameId = useSelector(selectGameId);
+  const { hand, score, stopped } = useSelector(selectGameDealer);
   const dispatch = useDispatch();
 
+  console.log('stopped', stopped);
 
-  const scoreVisibility = () => (stopped ? 'visible' : 'hidden');
+  const scoreVisibility = () => (hand.length > 2 ? 'visible' : 'hidden');
+
+  const fetchData = async () => {
+    // Вызываем действие для дилера, чтобы он взял карту
+    await dispatch(dealerGetCardThunk(gameId)).unwrap();
+    await dispatch(getGameInfoThunk(gameId)).unwrap();
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      // Вызываем действие для дилера, чтобы он взял карту
-      dispatch(dealerGetCardThunk(gameId));
-    };
-
     // Проверяем, все ли игроки остановились, и дилер не остановился
-    if (!stopped && players.every((player) => player.stopped)) fetchData();
-
-  }, [dispatch, gameId, stopped, players]);
+    if (
+      !stopped &&
+      players.length &&
+      players.every((player) => player.stopped)
+    ) {
+      const timeoutId = setTimeout(() => {
+        fetchData();
+      }, 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [dispatch, gameId, stopped, players, hand]);
 
   return (
     hand && (

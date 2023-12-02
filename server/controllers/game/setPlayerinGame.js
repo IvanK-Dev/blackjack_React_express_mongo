@@ -30,5 +30,6 @@ exports.setPlayerinGame = catchAsync(async (req, res) => {
     gameId,
     playerToken,
     playerId,
+    hand:playerHand,
   });
 });

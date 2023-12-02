@@ -8,11 +8,15 @@ import {
 import { selectGameId, selectGameStatus } from '../../redux/game/gameSelectors';
 import { token } from '../../http';
 import {
-  selectorPlayerStatus,
-  selectorPlayerToken,
+  selectPlayerStatus,
+  selectPlayerToken,
 } from '../../redux/players/playersSelectors';
 import { STATUS } from '../../constants/status';
 import { toggleStartGame } from '../../redux/game/gameSlice';
+import {
+  createLogThunk,
+  createPlayerLogThunk,
+} from '../../redux/logging/logThunk';
 
 function StartComponent() {
   const [inputGameId, setInputGameId] = useState('');
@@ -20,8 +24,8 @@ function StartComponent() {
 
   const gameStatus = useSelector(selectGameStatus);
   const gameId = useSelector(selectGameId);
-  const playerToken = useSelector(selectorPlayerToken);
-  const playerStatus = useSelector(selectorPlayerStatus);
+  const playerToken = useSelector(selectPlayerToken);
+  const playerStatus = useSelector(selectPlayerStatus);
 
   const dispatch = useDispatch();
 
@@ -33,8 +37,10 @@ function StartComponent() {
     evt.preventDefault();
     try {
       const result = await dispatch(createGameThunk()).unwrap();
+      await dispatch(createLogThunk(result.gameId)).unwrap();
       const player = await dispatch(createPlayerThunk(result.gameId)).unwrap();
-    console.log(player)
+      const { gameId, playerId, hand } = player;
+      await dispatch(createPlayerLogThunk({ gameId, playerId, hand })).unwrap();
     } catch (error) {
       //input toast
     }
@@ -44,8 +50,11 @@ function StartComponent() {
     console.log('handleJoinToGame');
     evt.preventDefault();
     try {
-      console.log('handleJoinToGame inputGameId', inputGameId || gameId);
-      await dispatch(createPlayerThunk(inputGameId || gameId)).unwrap();
+      const { gameId, playerId, hand } = await dispatch(
+        createPlayerThunk(inputGameId || gameId)
+      ).unwrap();
+      await dispatch(createPlayerLogThunk({ gameId, playerId, hand })).unwrap();
+
       if (!inputError) {
         console.log('handleJoinToGame inputError');
 
@@ -68,15 +77,12 @@ function StartComponent() {
     dispatch(toggleStartGame());
   };
 
-
-
-
   return (
     <div>
       <h1>Game Management</h1>
       <div>
         <div>
-          <button onClick={handleCreateGame} disabled={!!gameId}>
+          <button onClick={handleCreateGame} disabled={gameId || inputGameId}>
             Create game
           </button>
           {gameId && <p>Game ID: {gameId}</p>}
@@ -103,7 +109,6 @@ function StartComponent() {
           </button>
         )}
       </div>
-
     </div>
   );
 }

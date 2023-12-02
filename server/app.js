@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { gameRoutes } = require('./routes/api/game');
+const { logRoutes } = require('./routes/api/log');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get('/', (_, res) => {
 });
 
 app.use('/api/game',gameRoutes)
+app.use('/api/logging',logRoutes)
 
 app.all('*', (_, res) => {
   res.status(404).json({ message: 'app. Resourse not found ...' });

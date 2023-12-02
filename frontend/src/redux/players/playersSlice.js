@@ -14,7 +14,11 @@ import { token } from '../../http';
 export const playersSlice = createSlice({
   name: 'players',
   initialState: playersInitialState,
-  reducers: {},
+  reducers: {
+    clearPlayers: (state) => {
+      return playersInitialState;
+    },
+  },
   extraReducers: (builder) =>
     builder
       .addCase(createPlayerThunk.pending, (state) => {
@@ -60,6 +64,8 @@ export const playersSlice = createSlice({
         state.status = STATUS.rejected;
       }),
 });
+
+export const {clearPlayers}=playersSlice.actions
 
 export const playersReducer = persistReducer(
   { key: 'players', storage },
